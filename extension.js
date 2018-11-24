@@ -21,7 +21,11 @@ function activate(context) {
     console.log('Congratulations, your extension "save-your-plugin" is now active!');
 
     // Process Init for get Extension List
-    process.chdir('bin');
+    try {
+        process.chdir('bin');
+    } catch (error) {
+        console.log("Run from no windows");        
+    }
     console.log("CWD is Change:",process.cwd());
 
     
