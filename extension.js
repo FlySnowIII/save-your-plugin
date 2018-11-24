@@ -155,6 +155,7 @@ function installPlugin(str_extension_id = null){
         console.log(process.cwd());
         var result =  execSync('code --install-extension '+str_extension_id,{cwd:process.cwd()});
         console.log("Result is : ",result.toString()); 
+        vscode.window.showInformationMessage(result.toString());
         return result.toString();
     } catch (error) {
         
@@ -180,6 +181,8 @@ function uploadyourplugin(uid){
             firebaseDatabase.ref().child(uid).set(concatPluginList);
 
             var installedPluginArray = [];
+            
+            vscode.window.showInformationMessage("There are "+Object.values(dataObj).length+" change will be install");
 
             Object.values(dataObj).forEach(element => {
                 if(-1 == pluginlist.indexOf(element) && element.length>0){

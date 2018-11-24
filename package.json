@@ -1,9 +1,10 @@
 {
     "name": "save-your-plugin",
     "displayName": "Save your plugin",
-    "publisher": "pengfei",
+    "publisher": "pengfeit",
     "description": "",
-    "version": "0.0.1",
+    "icon": "./icon.png",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.29.0"
     },
