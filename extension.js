@@ -184,12 +184,7 @@ function uploadyourplugin(uid){
                 }
             });
 
-            if(installPlugin.length == 0){
-                vscode.window.showInformationMessage("Your Workplace is the Newtest.")
-            }
-            else{
-                vscode.window.showInformationMessage("Plugin is Loaded("+installedPluginArray.length+").Please reboot vscode.");
-            }
+            vscode.window.showInformationMessage("Plugin is Loaded.Please reboot vscode.");
         }
     });
 }
