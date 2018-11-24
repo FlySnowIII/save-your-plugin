@@ -1,0 +1,48 @@
+{
+    "name": "save-your-plugin",
+    "displayName": "Save your plugin",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.29.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.getPluginList",
+        "onCommand:extension.loginorRegist",
+        "onCommand:extension.rewritePluginListOnServer"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.getPluginList",
+                "title": "Get Plugin List(Save your plugin)"
+            },
+            {
+                "command": "extension.loginorRegist",
+                "title": "Download Your Plugin from Server(Save your plugin)"
+            },
+            {
+                "command": "extension.rewritePluginListOnServer",
+                "title": "Upload Your Plugin base from this computer(Save your plugin)"
+            }
+        ]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.21",
+        "eslint": "^4.11.0",
+        "@types/node": "^8.10.25",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "firebase-admin": "^6.2.0"
+    }
+}
