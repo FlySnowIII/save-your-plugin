@@ -3,7 +3,7 @@
     "displayName": "Save your plugin",
     "publisher": "pengfeit",
     "description": "",
-    "icon": "./icon.png",
+    "icon": "icon.png",
     "version": "0.0.2",
     "engines": {
         "vscode": "^1.29.0"
