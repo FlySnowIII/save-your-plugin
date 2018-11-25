@@ -229,7 +229,13 @@ function uploadyourplugin(uid){
             await someProcedure(pglist.length).then(x => console.log(x))
 
             console.log("Over");
-            vscode.window.showInformationMessage("Plugin is installed.Please Reload Window.");
+            vscode.window.showInformationMessage("Plugin is installed.Please Reload Window.", { modal: false }, 'Reload','Close')
+            .then(result => {
+                if(result == "Reload"){
+                    console.log("Windows will reload");
+                    vscode.commands.executeCommand('workbench.action.reloadWindow');
+                }
+            });
 
         });
     });

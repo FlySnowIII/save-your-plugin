@@ -1,6 +1,6 @@
 # Save Your Plugin
 
-v.0.0.3 by Pengfei Tang 2018.11.24
+v.0.0.4 by Pengfei Tang 2018.11.24
 
 This Plugin can help you to save your plugin list on Cloud and Download your plugin list when you will set another computer.
 
@@ -64,3 +64,10 @@ Emailアドレスがあれば、インストールしたプラグインをクラ
 3.将本机插件列表作为基准，重写云端备份的插件列表：
 
     saveplugin:Upload Your Plugin List Base from this computer
+
+----------------------------
+## History
+
+v 0.0.4: Add "Reload Button" at the last showInformationMessage box.
+
+v 0.0.3: 在插件安装过程中加入滚动条同步显示功能
