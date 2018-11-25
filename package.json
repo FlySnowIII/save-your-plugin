@@ -2,9 +2,9 @@
     "name": "save-your-plugin",
     "displayName": "Save your plugin",
     "publisher": "pengfeit",
-    "description": "",
+    "description": "Help you bakup your favorite plugin on Cloud",
     "icon": "icon.png",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.29.0"
     },
@@ -25,15 +25,15 @@
         "commands": [
             {
                 "command": "extension.getPluginList",
-                "title": "Get Plugin List(Save your plugin)"
+                "title": "saveplugin:Get Plugin List from this computer"
             },
             {
                 "command": "extension.loginorRegist",
-                "title": "Download Your Plugin from Server(Save your plugin)"
+                "title": "saveplugin:Download Your Plugin from Cloud Server"
             },
             {
                 "command": "extension.rewritePluginListOnServer",
-                "title": "Upload Your Plugin base from this computer(Save your plugin)"
+                "title": "saveplugin:Upload Your Plugin List Base from this computer"
             }
         ]
     },

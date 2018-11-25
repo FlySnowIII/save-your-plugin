@@ -3,6 +3,7 @@
 const vscode = require('vscode');
 const path = require('path');
 const execSync = require('child_process').execSync;
+var exec = require('child_process').exec;
 var admin = require("firebase-admin");
 var serviceAccount = require("./keys/vscode-save-your-plugin-firebase-adminsdk-1l6s7-e647d4b6b5.json");
 admin.initializeApp({
@@ -146,26 +147,30 @@ function getPluginList(){
 
 // --install-extension (<extension-id>)
 function installPlugin(str_extension_id = null){
-
-    if(!str_extension_id || str_extension_id==""){
-        return "Nothing is runing.";
-    }
-
-    try {
-        console.log(process.cwd());
-        var result =  execSync('code --install-extension '+str_extension_id,{cwd:process.cwd()});
-        console.log("Result is : ",result.toString()); 
-        vscode.window.showInformationMessage(result.toString());
-        return result.toString();
-    } catch (error) {
-        
-    }
+    return new Promise(function(resolve,reject){
+        exec('code --install-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
+            if(stderr){
+                console.log('stderr: ' + stderr);
+                reject(error);
+                return;
+            }
+            if (error !== null) {
+                console.log('Exec error: ' + error);
+                reject(error);
+                return;
+            }
+            console.log('stdout: ' + stdout);
+            resolve(stdout.toString());
+        });
+    });
 
 }
+
 
 function uploadyourplugin(uid){
     console.log("uploadyourplugin:",uid);
     var pluginlist = getPluginList().split('\n');
+    var installedPluginArray = [];
     firebaseDatabase.ref().child(uid).once('value').then(function(snapshort){
         var dataObj = snapshort.val();
         var concatPluginList = null;
@@ -173,26 +178,60 @@ function uploadyourplugin(uid){
             console.log("No Data!");
             concatPluginList = pluginlist;
             firebaseDatabase.ref().child(uid).update(pluginlist);
-            vscode.window.showInformationMessage("First Upload your plugin Successful!");
+            vscode.window.showInformationMessage("First time Upload your plugin Successful!");
 
         }
         else{
             concatPluginList = concatArrayRemoveSame(pluginlist,Object.values(dataObj));
             firebaseDatabase.ref().child(uid).set(concatPluginList);
-
-            var installedPluginArray = [];
             
-            vscode.window.showInformationMessage("There are "+Object.values(dataObj).length+" change will be install");
-
             Object.values(dataObj).forEach(element => {
                 if(-1 == pluginlist.indexOf(element) && element.length>0){
                     installedPluginArray.push(element);
-                    installPlugin(element);
                 }
             });
 
-            vscode.window.showInformationMessage("Plugin is Loaded.Please reboot vscode.");
         }
+        return installedPluginArray;
+    }).then(pglist=>{
+
+        if(pglist.length == 0){
+            vscode.window.showInformationMessage("Your workplace is the newest.");
+            return ;
+        }
+
+
+        vscode.window.withProgress({
+            location:vscode.ProgressLocation.Notification,
+            title:'Install new plugin: ',
+            cancellable:false
+        }, async (progress, token)=>{
+
+            progress.report({ increment: 0,message: pglist.length+" plugin will be installed."});
+
+            var posentNum = 100/pglist.length;
+
+            const someProcedure = async n =>
+            {
+                console.log("SSSSSSSSSSSSSSSSSTart");
+                for (let i = 0; i < pglist.length; i++) {
+                    const x = await new Promise(r => {
+                        installPlugin(pglist[i]).then(returnObj=>{
+                            progress.report({ increment: posentNum*i,message: returnObj});
+                            r();
+                        })
+                    })
+                    console.log (i);
+                }
+                return 'done'
+            }
+
+            await someProcedure(pglist.length).then(x => console.log(x))
+
+            console.log("Over");
+            vscode.window.showInformationMessage("Plugin is installed.Please Reload Window.");
+
+        });
     });
 }
 
