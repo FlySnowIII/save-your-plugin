@@ -4,7 +4,7 @@
     "publisher": "pengfeit",
     "description": "Help you bakup your favorite plugin on Cloud",
     "icon": "icon.png",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.29.0"
     },
@@ -49,6 +49,6 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "firebase-admin": "^6.2.0"
+        "request": "^2.88.0"
     }
 }

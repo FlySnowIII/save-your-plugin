@@ -68,6 +68,8 @@ Emailアドレスがあれば、インストールしたプラグインをクラ
 ----------------------------
 ## History
 
+v 0.0.5: Souce Diet
+
 v 0.0.4: Add "Reload Button" at the last showInformationMessage box.
 
 v 0.0.3: 在插件安装过程中加入滚动条同步显示功能

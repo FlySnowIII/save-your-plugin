@@ -1,17 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const path = require('path');
+// const path = require('path');
+const request = require('request');
 const execSync = require('child_process').execSync;
 var exec = require('child_process').exec;
-var admin = require("firebase-admin");
-var serviceAccount = require("./keys/vscode-save-your-plugin-firebase-adminsdk-1l6s7-e647d4b6b5.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://vscode-save-your-plugin.firebaseio.com"
-});
-var firebaseAuth     = admin.auth();
-var firebaseDatabase = admin.database();
+
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,107 +19,79 @@ function activate(context) {
     try {
         process.chdir('bin');
     } catch (error) {
-        console.log("Run from no windows");        
+        console.log("Run from no windows");
     }
     console.log("CWD is Change:",process.cwd());
 
-    
+
     let getpluginlist_subscription = vscode.commands.registerCommand('extension.getPluginList', function(){
         vscode.window.showInformationMessage(getPluginList());
 
     });
     context.subscriptions.push(getpluginlist_subscription);
 
+    /**
+     *
+     */
     let loginorRegist_subscription = vscode.commands.registerCommand('extension.loginorRegist', function (){
+        var URL = 'https://us-central1-vscode-save-your-plugin.cloudfunctions.net/logincreate';
 
         vscode.window.showInputBox({ placeHolder: "Please input your Email for Login or Register" }).then(useremail => {
-			if (!useremail) {
-				return;
-			}
-            console.log(useremail);
-            var userpassword = "0pp00pp0";
-
-            firebaseAuth.getUserByEmail(useremail)
-                .then(function(userRecord) {
-                    // See the UserRecord reference doc for the contents of userRecord.
-                    console.log("Successfully fetched user data:", userRecord.toJSON());
-                    vscode.window.showInformationMessage("Login Successful: "+userRecord.email+". Please wait a moment.");
-                    uploadyourplugin(userRecord.uid);
-                })
-                .catch(function(error) {
-                    console.log("Error fetching user data:", error);
-                    firebaseAuth.createUser({
-                        email: useremail,
-                        emailVerified: false,
-                        // phoneNumber: "+11234567890",
-                        password: userpassword,
-                        // displayName: "John Doe",
-                        // photoURL: "http://www.example.com/12345678/photo.png",
-                        disabled: false
-                    })
-                    .then(function(userRecord) {
-                        // See the UserRecord reference doc for the contents of userRecord.
-                        console.log("Successfully created new user:", userRecord.uid);
-                        vscode.window.showInformationMessage("Register Successful: "+userRecord.email);
-                        uploadyourplugin(userRecord.uid);
-
-                    })
-                    .catch(function(error) {
-                        console.log("Error creating new user:", error);
+            vscode.window.showInputBox({ placeHolder: "Please input your password for Login or Register" }).then(password => {
+                request.post({
+                    uri: URL,
+                    headers: { "Content-type": "application/json" },
+                    json: {
+                        email:useremail,
+                        password:password
+                    }
+                }, (err, res, data) => {
+                    console.log(data);
+                    if (data.hasOwnProperty('code')) {
                         vscode.window.showErrorMessage("Sorry, Register is falied. Please change other email and try again.");
+                        return;
+                    }
 
-                    });
+                    vscode.window.showInformationMessage("Login Successful: "+useremail+". Please wait a moment.");
+                    uploadyourplugin(data);
                 });
-
-
             });
 
+        });
     });
     context.subscriptions.push(loginorRegist_subscription);
 
+    /**
+     *
+     */
     let rewritePluginlistfromThisWorkplace_subscription = vscode.commands.registerCommand('extension.rewritePluginListOnServer', function (){
+        var pluginlist = getPluginList().split('\n');
+
+        var URL = 'https://us-central1-vscode-save-your-plugin.cloudfunctions.net/logincreate';
 
         vscode.window.showInputBox({ placeHolder: "Please input your Email for Login or Register" }).then(useremail => {
-			if (!useremail) {
-				return;
-			}
-            console.log(useremail);
-            var userpassword = "0pp00pp0";
-
-            firebaseAuth.getUserByEmail(useremail)
-                .then(function(userRecord) {
-                    // See the UserRecord reference doc for the contents of userRecord.
-                    console.log("Successfully fetched user data:", userRecord.toJSON());
-                    vscode.window.showInformationMessage("Login Successful: "+userRecord.email+". Please wait a moment.");
-                    rewritePluginList(userRecord.uid);
-                })
-                .catch(function(error) {
-                    console.log("Error fetching user data:", error);
-                    firebaseAuth.createUser({
-                        email: useremail,
-                        emailVerified: false,
-                        // phoneNumber: "+11234567890",
-                        password: userpassword,
-                        // displayName: "John Doe",
-                        // photoURL: "http://www.example.com/12345678/photo.png",
-                        disabled: false
-                    })
-                    .then(function(userRecord) {
-                        // See the UserRecord reference doc for the contents of userRecord.
-                        console.log("Successfully created new user:", userRecord.uid);
-                        vscode.window.showInformationMessage("Register Successful: "+userRecord.email);
-                        rewritePluginList(userRecord.uid);
-
-                    })
-                    .catch(function(error) {
-                        console.log("Error creating new user:", error);
+            vscode.window.showInputBox({ placeHolder: "Please input your password for Login or Register" }).then(password => {
+                request.post({
+                    uri: URL,
+                    headers: { "Content-type": "application/json" },
+                    json: {
+                        email:useremail,
+                        password:password,
+                        pluginlist:pluginlist
+                    }
+                }, (err, res, data) => {
+                    console.log(data);
+                    if (data.hasOwnProperty('code')) {
                         vscode.window.showErrorMessage("Sorry, Register is falied. Please change other email and try again.");
+                        return;
+                    }
 
-                    });
+                    vscode.window.showInformationMessage("Rewrite your Pluginlist on Firebase server is Successful!");
                 });
-
-
             });
+
+        });
+
 
     });
     context.subscriptions.push(rewritePluginlistfromThisWorkplace_subscription);
@@ -167,86 +133,100 @@ function installPlugin(str_extension_id = null){
 }
 
 
-function uploadyourplugin(uid){
-    console.log("uploadyourplugin:",uid);
+function uploadyourplugin(dataObj){
     var pluginlist = getPluginList().split('\n');
+    var concatPluginList = pluginlist;
     var installedPluginArray = [];
-    firebaseDatabase.ref().child(uid).once('value').then(function(snapshort){
-        var dataObj = snapshort.val();
-        var concatPluginList = null;
-        if(!dataObj){
-            console.log("No Data!");
-            concatPluginList = pluginlist;
-            firebaseDatabase.ref().child(uid).update(pluginlist);
-            vscode.window.showInformationMessage("First time Upload your plugin Successful!");
+    var upload_URL = "https://us-central1-vscode-save-your-plugin.cloudfunctions.net/uploadpluginlist";
 
-        }
-        else{
-            concatPluginList = concatArrayRemoveSame(pluginlist,Object.values(dataObj));
-            firebaseDatabase.ref().child(uid).set(concatPluginList);
-            
-            Object.values(dataObj).forEach(element => {
-                if(-1 == pluginlist.indexOf(element) && element.length>0){
-                    installedPluginArray.push(element);
-                }
-            });
-
-        }
-        return installedPluginArray;
-    }).then(pglist=>{
-
-        if(pglist.length == 0){
-            vscode.window.showInformationMessage("Your workplace is the newest.");
-            return ;
-        }
-
-
-        vscode.window.withProgress({
-            location:vscode.ProgressLocation.Notification,
-            title:'Install new plugin: ',
-            cancellable:false
-        }, async (progress, token)=>{
-
-            progress.report({ increment: 0,message: pglist.length+" plugin will be installed."});
-
-            var posentNum = 100/pglist.length;
-
-            const someProcedure = async n =>
-            {
-                console.log("SSSSSSSSSSSSSSSSSTart");
-                for (let i = 0; i < pglist.length; i++) {
-                    const x = await new Promise(r => {
-                        installPlugin(pglist[i]).then(returnObj=>{
-                            progress.report({ increment: posentNum*i,message: returnObj});
-                            r();
-                        })
-                    })
-                    console.log (i);
-                }
-                return 'done'
+    if(dataObj.data.length<1){
+        request.post({
+            uri: upload_URL,
+            headers: { "Content-type": "application/json" },
+            json: {
+                uid:dataObj.uid,
+                pluginlist:pluginlist
             }
-
-            await someProcedure(pglist.length).then(x => console.log(x))
-
-            console.log("Over");
-            vscode.window.showInformationMessage("Plugin is installed.Please Reload Window.", { modal: false }, 'Reload','Close')
-            .then(result => {
-                if(result == "Reload"){
-                    console.log("Windows will reload");
-                    vscode.commands.executeCommand('workbench.action.reloadWindow');
-                }
-            });
+        }, (err, res, data) => {
+            console.log(data);
+            if (data.hasOwnProperty('code')) {
+                vscode.window.showErrorMessage("Sorry, Register is falied. Please change other email and try again.");
+                return;
+            }
+            vscode.window.showInformationMessage("Your workplace is the newest. And First time Upload your plugin Successful!");
 
         });
+        return;
+    }
+
+    concatPluginList = concatArrayRemoveSame(pluginlist,dataObj.data);
+
+    dataObj.data.forEach(element => {
+        if(-1 == pluginlist.indexOf(element) && element.length>0){
+            installedPluginArray.push(element);
+        }
     });
+
+    if(installedPluginArray.length == 0){
+        vscode.window.showInformationMessage("Your workplace is the newest.");
+        return ;
+    }
+
+    request.post({
+        uri: upload_URL,
+        headers: { "Content-type": "application/json" },
+        json: {
+            uid:dataObj.uid,
+            pluginlist:concatPluginList
+        }
+    }, (err, res, data) => {
+        console.log(data);
+
+    });
+
+
+
+    vscode.window.withProgress({
+        location:vscode.ProgressLocation.Notification,
+        title:'Install new plugin: ',
+        cancellable:false
+    }, async (progress, token)=>{
+
+        progress.report({ increment: 0,message: installedPluginArray.length+" plugin will be installed."});
+
+        var posentNum = 100/installedPluginArray.length;
+
+        const someProcedure = async n =>
+        {
+            console.log("SSSSSSSSSSSSSSSSSTart");
+            for (let i = 0; i < installedPluginArray.length; i++) {
+                const x = await new Promise(r => {
+                    installPlugin(installedPluginArray[i]).then(returnObj=>{
+                        progress.report({ increment: posentNum*i,message: returnObj});
+                        r();
+                    })
+                })
+                console.log (i);
+            }
+            return 'done'
+        }
+
+        await someProcedure(installedPluginArray.length).then(x => console.log(x))
+
+        console.log("Over");
+        vscode.window.showInformationMessage("Plugin is installed.Please Reload Window.", { modal: false }, 'Reload','Close')
+        .then(result => {
+            if(result == "Reload"){
+                console.log("Windows will reload");
+                vscode.commands.executeCommand('workbench.action.reloadWindow');
+            }
+        });
+
+    });
+
+
 }
 
-function rewritePluginList(uid){
-    console.log("rewritePluginList:",uid);
-    var pluginlist = getPluginList().split('\n');
-    firebaseDatabase.ref().child(uid).set(pluginlist);
-    vscode.window.showInformationMessage("Rewrite your Pluginlist on Firebase server is Successful!");
-}
 
 
 function concatArrayRemoveSame(array1,array2){
