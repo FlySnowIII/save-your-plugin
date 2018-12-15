@@ -18,7 +18,8 @@
     "activationEvents": [
         "onCommand:extension.getPluginList",
         "onCommand:extension.loginorRegist",
-        "onCommand:extension.rewritePluginListOnServer"
+        "onCommand:extension.rewritePluginListOnServer",
+        "onCommand:extension.removeAllPlugin"
     ],
     "main": "./extension",
     "contributes": {
@@ -34,6 +35,10 @@
             {
                 "command": "extension.rewritePluginListOnServer",
                 "title": "saveplugin:Upload Your Plugin List Base from this computer"
+            },
+            {
+                "command": "extension.removeAllPlugin",
+                "title": "saveplugin:Remove all plugin"
             }
         ]
     },

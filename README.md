@@ -1,6 +1,6 @@
 # Save Your Plugin
 
-v.0.0.4 by Pengfei Tang 2018.11.24
+v.0.0.6 by Pengfei Tang 2018.11.24
 
 This Plugin can help you to save your plugin list on Cloud and Download your plugin list when you will set another computer.
 
@@ -14,9 +14,13 @@ There are three command you can use(Press Ctrl + Shitf + P, and input that):
 
     saveplugin:Download Your Plugin from Cloud Server
 
-3.Just upload plugin list from this computer. Cloud data will be reset. 
+3.Just upload plugin list from this computer. Cloud data will be reset.
 
     saveplugin:Upload Your Plugin List Base from this computer
+
+4.Remove all plugin
+
+    saveplugin:Remove all plugin
 
 -----------------------------
 日本語：
@@ -67,6 +71,8 @@ Emailアドレスがあれば、インストールしたプラグインをクラ
 
 ----------------------------
 ## History
+
+v 0.0.6: Add "Remove All Plugin"
 
 v 0.0.5: Souce Diet
 

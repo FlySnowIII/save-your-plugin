@@ -61,6 +61,49 @@ function activate(context) {
     });
     context.subscriptions.push(loginorRegist_subscription);
 
+    let removeAllPlugin_subscription = vscode.commands.registerCommand('extension.removeAllPlugin', function(){
+        var pluginlist = getPluginList().split('\n');
+
+        vscode.window.withProgress({
+            location:vscode.ProgressLocation.Notification,
+            title:'Remove Plugin: ',
+            cancellable:false
+        }, async (progress, token)=>{
+    
+            progress.report({ increment: 0,message: pluginlist.length+" plugin will be installed."});
+    
+            var posentNum = 100/pluginlist.length;
+    
+            const someProcedure = async n =>
+            {
+                for (let i = 0; i < pluginlist.length; i++) {
+                    const x = await new Promise(r => {
+                        removePlugin(pluginlist[i]).then(returnObj=>{
+                            progress.report({ increment: posentNum*i,message: returnObj});
+                            r();
+                        })
+                    })
+                    console.log (i);
+                }
+                return 'done'
+            }
+    
+            await someProcedure(pluginlist.length).then(x => console.log(x))
+    
+            console.log("Over");
+            vscode.window.showInformationMessage("All Plugin was Removed. Please Reload Window.", { modal: false }, 'Reload','Close')
+            .then(result => {
+                if(result == "Reload"){
+                    console.log("Windows will reload");
+                    vscode.commands.executeCommand('workbench.action.reloadWindow');
+                }
+            });
+    
+        });
+
+    });
+    context.subscriptions.push(removeAllPlugin_subscription);
+
     /**
      *
      */
@@ -115,6 +158,27 @@ function getPluginList(){
 function installPlugin(str_extension_id = null){
     return new Promise(function(resolve,reject){
         exec('code --install-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
+            if(stderr){
+                console.log('stderr: ' + stderr);
+                reject(error);
+                return;
+            }
+            if (error !== null) {
+                console.log('Exec error: ' + error);
+                reject(error);
+                return;
+            }
+            console.log('stdout: ' + stdout);
+            resolve(stdout.toString());
+        });
+    });
+
+}
+
+// --uninstall-extension (<extension-id>)
+function removePlugin(str_extension_id = null){
+    return new Promise(function(resolve,reject){
+        exec('code --uninstall-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
             if(stderr){
                 console.log('stderr: ' + stderr);
                 reject(error);
