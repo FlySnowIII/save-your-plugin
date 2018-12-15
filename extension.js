@@ -70,9 +70,9 @@ function activate(context) {
             cancellable:false
         }, async (progress, token)=>{
     
-            progress.report({ increment: 0,message: pluginlist.length+" plugin will be installed."});
+            progress.report({ increment: 0,message: pluginlist.length+" plugin will be remove."});
     
-            var posentNum = 100/pluginlist.length;
+            var posentNum = pluginlist.length/100;
     
             const someProcedure = async n =>
             {
@@ -178,20 +178,22 @@ function installPlugin(str_extension_id = null){
 // --uninstall-extension (<extension-id>)
 function removePlugin(str_extension_id = null){
     return new Promise(function(resolve,reject){
-        exec('code --uninstall-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
-            if(stderr){
-                console.log('stderr: ' + stderr);
-                reject(error);
-                return;
-            }
-            if (error !== null) {
-                console.log('Exec error: ' + error);
-                reject(error);
-                return;
-            }
-            console.log('stdout: ' + stdout);
-            resolve(stdout.toString());
-        });
+        if(str_extension_id != 'pengfeit.save-your-plugin'){
+            exec('code --uninstall-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
+                if(stderr){
+                    console.log('stderr: ' + stderr);
+                    reject(error);
+                    return;
+                }
+                if (error !== null) {
+                    console.log('Exec error: ' + error);
+                    reject(error);
+                    return;
+                }
+                console.log('stdout: ' + stdout);
+                resolve(stdout.toString());
+            });
+        }
     });
 
 }
@@ -258,7 +260,7 @@ function uploadyourplugin(dataObj){
 
         progress.report({ increment: 0,message: installedPluginArray.length+" plugin will be installed."});
 
-        var posentNum = 100/installedPluginArray.length;
+        var posentNum = installedPluginArray.length/100;
 
         const someProcedure = async n =>
         {
