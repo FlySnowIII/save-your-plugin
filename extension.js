@@ -179,20 +179,24 @@ function installPlugin(str_extension_id = null){
 function removePlugin(str_extension_id = null){
     return new Promise(function(resolve,reject){
         if(str_extension_id != 'pengfeit.save-your-plugin'){
+            console.log("str_extension_id:",str_extension_id);
             exec('code --uninstall-extension '+str_extension_id,{cwd:process.cwd()}, function (error, stdout, stderr) {
                 if(stderr){
                     console.log('stderr: ' + stderr);
-                    reject(error);
+                    resolve(error);
                     return;
                 }
                 if (error !== null) {
                     console.log('Exec error: ' + error);
-                    reject(error);
+                    resolve(error);
                     return;
                 }
                 console.log('stdout: ' + stdout);
                 resolve(stdout.toString());
             });
+        }
+        else{
+            resolve("Save your plugin");
         }
     });
 
