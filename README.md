@@ -1,6 +1,6 @@
 # Save Your Plugin
 
-v.0.0.8 by Pengfei Tang 2018.12.15
+v.0.0.9 by Pengfei Tang 2019.04.24
 
 This Plugin can help you to save your plugin list on Cloud and Download your plugin list when you will set another computer.
 
@@ -72,7 +72,7 @@ Emailアドレスがあれば、インストールしたプラグインをクラ
 ----------------------------
 ## History
 
-v 0.0.8: Fix some bug when install plugin, and make source code better.
+v 0.0.9: Fix some bug when install plugin, and make source code better.
 
 v 0.0.7: Fix some bug
 
