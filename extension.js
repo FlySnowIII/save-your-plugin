@@ -4,7 +4,7 @@ const vscode = require('vscode');
 // const path = require('path');
 const request = require('request');
 const execSync = require('child_process').execSync;
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
 
 
 // this method is called when your extension is activated
